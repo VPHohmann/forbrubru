@@ -1,7 +1,3 @@
-// ALERTA SIMPLES DE BOAS-VINDAS
-setTimeout(() => {
-    alert("oi rsrs atualizei, mexe ai e ve se vc gosta ❤️ (isso vai ficar abrindo toda hora pq eu quero que voce se irrite hihihihi)");
-}, 1500);
 
 document.addEventListener('DOMContentLoaded', function() {
     const overlay = document.getElementById('popupOverlay');

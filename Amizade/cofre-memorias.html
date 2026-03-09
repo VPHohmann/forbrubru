@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cofre de Memórias</title>
+    <link rel="stylesheet" href="cofre-memorias.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Tela de senha -->
+        <div class="password-screen" id="passwordScreen">
+            <h1>🔐 Cofre de Memórias</h1>
+            <p>Digite a senha para entrar:</p>
+            <div class="password-hint">💡 Dica: vc que criou</div>
+            
+            <div class="password-input-container">
+                <input type="password" id="passwordInput" placeholder="Senha secreta...">
+                <span class="toggle-password" onclick="togglePasswordVisibility()">
+                    <i class="fas fa-eye" id="toggleIcon"></i>
+                </span>
+            </div>
+            
+            <button onclick="checkPassword()">Abrir</button>
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <!-- Conteúdo principal (só aparece após a senha) -->
+        <div class="content" id="content">
+            
+            <!-- Botão de voltar flutuante -->
+            <div style="position: sticky; top: 10px; z-index: 100; text-align: right; padding: 10px;">
+                <button onclick="goToHome()" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+            </div>
+            
+            <!-- TÍTULO -->
+            <div style="padding: 20px; text-align: center;">
+                <h1 style="color: #667eea;">Timeline</h1>
+                <p style="color: #f0f0f0;">Para você não se esquecer de mim</p>
+            </div>
+
+            <!-- ITEM DESTAQUE - O INÍCIO (centralizado) -->
+            <div class="featured-memory">
+                <div class="featured-content">
+                    <div class="featured-date">📅 05/09/2025 ⏰ 20:00</div>
+                    <h2>O dia que tudo começou</h2>
+                    <p>Você foi uma das primeiras pessoas a mostrar interesse pelo RPG, e eu fiquei tão animada em te chamar. Você levava aquilo a sério, e eu sempre soube que seria uma boa jogadora... só não imaginava que seria minha melhor amiga um dia. Obrigada por existir na minha vida 💕</p>
+                </div>
+            </div>
+
+            <!-- TIMELINE PRINCIPAL -->
+            <div class="timeline-section">
+                <!-- Timeline principal (vazia, o JS vai preencher) -->
+                <div class="timeline" id="historiaTimeline">
+                    <!-- As memórias serão adicionadas aqui pelo JavaScript -->
+                </div>
+                
+                <!-- Botão para adicionar -->
+                <div class="add-memory-wrapper">
+                    <button class="add-memory-btn" onclick="toggleForm()">
+                        <i class="fas fa-plus-circle"></i> Adicionar novo momento
+                    </button>
+                </div>
+            </div>
+
+            <!-- ===== SEÇÃO DE FILTROS POR TEMA ===== -->
+            <div class="themes-section">
+                <h2 class="section-title">📌 Explorar por Tema</h2>
+                
+                <!-- Botões de filtro -->
+                <div class="theme-filters">
+                    <button class="theme-btn active" onclick="filterByTheme('all')">Todos</button>
+                    <button class="theme-btn" onclick="filterByTheme('Conhecimento')">Conhecimento</button>
+                    <button class="theme-btn" onclick="filterByTheme('Desentendimentos')">Desentendimentos</button>
+                    <button class="theme-btn" onclick="filterByTheme('Engraçados')">Engraçados</button>
+                    <button class="theme-btn" onclick="filterByTheme('Especiais')">Especiais</button>
+                </div>
+                
+                <!-- Container para mostrar as memórias filtradas -->
+                <div class="filtered-memories" id="filteredMemories">
+                    <div class="empty-filter">
+                        <p>Selecione um tema para ver as memórias</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== FORMULÁRIO PARA ADICIONAR ===== -->
+            <div class="memory-form" id="memoryForm" style="display: none;">
+                <h3 id="formTitle">📝 Nova memória</h3>
+                
+                <div class="form-group">
+                    <label>Data:</label>
+                    <input type="date" id="memoryDate" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label>Hora (opcional):</label>
+                    <input type="time" id="memoryTime" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label>Título:</label>
+                    <input type="text" id="memoryTitle" class="form-control" placeholder="Ex: Nosso dia no parque">
+                </div>
+                
+                <div class="form-group">
+                    <label>Tema:</label>
+                    <select id="memoryTheme" class="form-control">
+                        <option value="Conhecimento">Conhecimento</option>
+                        <option value="Desentendimentos">Desentendimentos</option>
+                        <option value="Engraçados">Engraçados</option>
+                        <option value="Especiais">Especiais</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>O que aconteceu?</label>
+                    <textarea id="memoryDescription" class="form-control" rows="3" placeholder="Descreva esse momento..."></textarea>
+                </div>
+                
+                <!-- Quem está escrevendo -->
+                <div class="form-group">
+                    <label>Quem está escrevendo?</label>
+                    <div class="author-selector">
+                        <label class="author-option">
+                            <input type="radio" name="author" value="Bruna" checked>
+                            <span class="author-badge bruna">Bruna 💙</span>
+                        </label>
+                        <label class="author-option">
+                            <input type="radio" name="author" value="Vanessa">
+                            <span class="author-badge vanessa">Vanessa 💚</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Emojis:</label>
+                    <div class="emoji-picker">
+                        <span onclick="addEmoji('❤️')">❤️</span>
+                        <span onclick="addEmoji('😂')">😂</span>
+                        <span onclick="addEmoji('😍')">😍</span>
+                        <span onclick="addEmoji('😡')">😡</span>
+                        <span onclick="addEmoji('🥰')">🥰</span>
+                        <span onclick="addEmoji('😑')">😑</span>
+                        <span onclick="addEmoji('😤')">😤</span>
+                        <span onclick="addEmoji('😵')">😵</span>
+                    </div>
+                </div>
+                
+                <div class="form-buttons">
+                    <button class="save-btn" onclick="saveMemory()">Salvar memória</button>
+                    <button class="cancel-btn" onclick="toggleForm()">Cancelar</button>
+                </div>
+            </div>
+            
+        </div> <!-- Fim do content -->
+    </div> <!-- Fim do container -->
+
+    <script src="cofre-memorias.js"></script>
+</body>
+</html>
