@@ -21,7 +21,6 @@ async function loadMemories() {
     try {
         const response = await fetch(API_URL);
         const data = await response.json();
-        // Se a resposta for um array, usa os dados. Se não, inicia vazio.
         memories = Array.isArray(data) ? data : [];
     } catch (error) {
         console.error('Erro ao carregar memórias:', error);
@@ -215,7 +214,7 @@ async function saveMemory() {
         const result = await response.json();
         if (result.status === 'success') {
             showNotification(editingId ? '✏️ Memória atualizada!' : '✨ Memória adicionada!');
-            await loadMemories(); // Recarrega a lista
+            await loadMemories();
         } else {
             showNotification('❌ Erro ao salvar');
         }
@@ -254,6 +253,44 @@ async function deleteMemory(id) {
     }
 }
 
+// ===== FUNÇÕES DE LOGIN (RESTAURADAS!) =====
+function checkPassword() {
+    const password = document.getElementById('passwordInput').value;
+    const errorMessage = document.getElementById('errorMessage');
+    
+    const senhaSecreta = "Brunessa40";
+    
+    if (password === senhaSecreta) {
+        localStorage.setItem('cofre-logado', 'true');
+        document.getElementById('passwordScreen').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+        loadMemories();
+    } else {
+        errorMessage.textContent = '❌ Senha incorreta. Tente novamente!';
+    }
+}
+
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('passwordInput');
+    const toggleIcon = document.getElementById('toggleIcon');
+    
+    if (!passwordInput || !toggleIcon) return;
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+function goToHome() {
+    window.location.href = 'index.html';
+}
+
 // Notificação
 function showNotification(message) {
     const notification = document.createElement('div');
@@ -267,35 +304,4 @@ function showNotification(message) {
     notification.textContent = message;
     document.body.appendChild(notification);
     setTimeout(() => notification.remove(), 3000);
-}
-
-// ===== FUNÇÕES DE LOGIN =====
-function checkPassword() {
-    const password = document.getElementById('passwordInput').value;
-    const errorMessage = document.getElementById('errorMessage');
-    const senhaSecreta = "Brunessa40";
-    if (password === senhaSecreta) {
-        localStorage.setItem('cofre-logado', 'true');
-        document.getElementById('passwordScreen').style.display = 'none';
-        document.getElementById('content').style.display = 'block';
-        loadMemories();
-    } else {
-        errorMessage.textContent = '❌ Senha incorreta. Tente novamente!';
-    }
-}
-
-function togglePasswordVisibility() {
-    const input = document.getElementById('passwordInput');
-    const icon = document.getElementById('toggleIcon');
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.replace('fa-eye', 'fa-eye-slash');
-    } else {
-        input.type = 'password';
-        icon.classList.replace('fa-eye-slash', 'fa-eye');
-    }
-}
-
-function goToHome() {
-    window.location.href = 'index.html';
 }
