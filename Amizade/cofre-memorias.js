@@ -1,4 +1,4 @@
-// ===== VERIFICAÇÃO DE LOGIN (ADICIONADO) =====
+// ===== VERIFICAÇÃO DE LOGIN =====
 document.addEventListener('DOMContentLoaded', function() {
     const isLoggedIn = localStorage.getItem('cofre-logado');
     
@@ -27,6 +27,7 @@ function loadMemories() {
 // Mostrar timeline principal
 function displayHistoriaTimeline() {
     const timeline = document.getElementById('historiaTimeline');
+    if (!timeline) return;
     
     timeline.innerHTML = '';
     
@@ -69,10 +70,10 @@ function displayHistoriaTimeline() {
                         <span class="memory-author author-badge-timeline ${authorClass}">✍️ ${authorName}</span>
                     </div>
                     <div class="memory-actions">
-                        <button class="edit-memory" onclick="editMemory(${memory.id})">
+                        <button class="edit-memory" onclick="editMemory('${memory.id}')">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="delete-memory" onclick="deleteMemory(${memory.id})">
+                        <button class="delete-memory" onclick="deleteMemory('${memory.id}')">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -91,6 +92,7 @@ function filterByTheme(theme) {
     event.target.classList.add('active');
     
     const container = document.getElementById('filteredMemories');
+    if (!container) return;
     
     if (theme === 'all') {
         container.innerHTML = `
@@ -134,10 +136,10 @@ function filterByTheme(theme) {
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                     <span class="memory-author author-badge-timeline ${authorClass}">✍️ ${authorName}</span>
                     <div>
-                        <button class="edit-memory" onclick="editMemory(${memory.id})">
+                        <button class="edit-memory" onclick="editMemory('${memory.id}')">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="delete-list-btn" onclick="deleteMemory(${memory.id})">
+                        <button class="delete-list-btn" onclick="deleteMemory('${memory.id}')">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -153,8 +155,9 @@ function filterByTheme(theme) {
 // Controle do formulário
 function toggleForm() {
     const form = document.getElementById('memoryForm');
+    if (!form) return;
     
-    if (form.style.display === 'none') {
+    if (form.style.display === 'none' || form.style.display === '') {
         form.style.display = 'block';
         form.scrollIntoView({ behavior: 'smooth' });
     } else {
@@ -173,20 +176,18 @@ function cancelEdit() {
     document.getElementById('memoryTitle').value = '';
     document.getElementById('memoryDescription').value = '';
     document.getElementById('memoryTheme').value = 'Conhecimento';
-    document.querySelector('input[name="author"][value="Bruna"]').checked = true;
+    const brunaRadio = document.querySelector('input[name="author"][value="Bruna"]');
+    if (brunaRadio) brunaRadio.checked = true;
 }
 
-// CORREÇÃO: Função editMemory
 function editMemory(id) {
-    const memoryId = typeof id === 'string' ? parseInt(id) : id;
-    const memory = memories.find(m => m.id === memoryId);
-    
+    const memory = memories.find(m => m.id == id);
     if (!memory) {
         console.log('Memória não encontrada:', id);
         return;
     }
     
-    editingId = memoryId;
+    editingId = id;
     
     document.getElementById('formTitle').textContent = '✏️ Editando memória';
     document.getElementById('memoryDate').value = formatDateForInput(memory.date);
@@ -203,24 +204,26 @@ function editMemory(id) {
 }
 
 function formatDateForInput(dateString) {
+    if (!dateString) return '';
     const [day, month, year] = dateString.split('/');
     return `${year}-${month}-${day}`;
 }
 
 function addEmoji(emoji) {
     const description = document.getElementById('memoryDescription');
-    description.value += emoji;
-    description.focus();
+    if (description) {
+        description.value += emoji;
+        description.focus();
+    }
 }
 
-// CORREÇÃO: Função saveMemory
 function saveMemory() {
     const date = document.getElementById('memoryDate').value;
     const time = document.getElementById('memoryTime').value;
     const title = document.getElementById('memoryTitle').value;
     const theme = document.getElementById('memoryTheme').value;
     const description = document.getElementById('memoryDescription').value;
-    const author = document.querySelector('input[name="author"]:checked').value;
+    const author = document.querySelector('input[name="author"]:checked')?.value || 'Bruna';
     
     if (!date || !title || !description || !theme) {
         alert('Por favor, preencha todos os campos!');
@@ -228,7 +231,7 @@ function saveMemory() {
     }
     
     if (editingId) {
-        const index = memories.findIndex(m => m.id === editingId);
+        const index = memories.findIndex(m => m.id == editingId);
         if (index !== -1) {
             memories[index] = {
                 ...memories[index],
@@ -244,7 +247,7 @@ function saveMemory() {
         editingId = null;
     } else {
         const newMemory = {
-            id: Date.now(),
+            id: Date.now().toString(),
             date: formatDate(date),
             time: time || '00:00',
             title: title,
@@ -263,16 +266,14 @@ function saveMemory() {
 }
 
 function formatDate(dateString) {
+    if (!dateString) return '';
     const [year, month, day] = dateString.split('-');
     return `${day}/${month}/${year}`;
 }
 
-// CORREÇÃO: Função deleteMemory
 function deleteMemory(id) {
-    const memoryId = typeof id === 'string' ? parseInt(id) : id;
-    
     if (confirm('Tem certeza que quer apagar essa memória?')) {
-        memories = memories.filter(memory => memory.id !== memoryId);
+        memories = memories.filter(memory => memory.id != id);
         localStorage.setItem('bruvan-memories', JSON.stringify(memories));
         displayHistoriaTimeline();
         
@@ -315,7 +316,6 @@ function checkPassword() {
     const senhaSecreta = "Brunessa40";
     
     if (password === senhaSecreta) {
-        // ALTERADO de sessionStorage para localStorage
         localStorage.setItem('cofre-logado', 'true');
         document.getElementById('passwordScreen').style.display = 'none';
         document.getElementById('content').style.display = 'block';
@@ -361,3 +361,5 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+console.log('✅ Cofre de Memórias carregado');
