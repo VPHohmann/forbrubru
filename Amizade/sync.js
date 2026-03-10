@@ -50,5 +50,12 @@ window.deleteMemory = function(id) {
     setTimeout(saveToCloud, 500);
 };
 
-// NÃO SOBRESCREVER loadMemories para não interferir na senha
+// Carrega da nuvem quando a página inicia
+document.addEventListener('DOMContentLoaded', function() {
+    const isLoggedIn = localStorage.getItem('cofre-logado');
+    if (isLoggedIn === 'true') {
+        setTimeout(loadFromCloud, 1500);
+    }
+});
+
 console.log('✅ Sync.js carregado');

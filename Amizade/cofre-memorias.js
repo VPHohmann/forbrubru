@@ -182,10 +182,7 @@ function cancelEdit() {
 
 function editMemory(id) {
     const memory = memories.find(m => m.id == id);
-    if (!memory) {
-        console.log('Memória não encontrada:', id);
-        return;
-    }
+    if (!memory) return;
     
     editingId = id;
     
