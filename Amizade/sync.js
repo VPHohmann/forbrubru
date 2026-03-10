@@ -1,5 +1,4 @@
-// ===== SINCRONIZAÇÃO COM GOOGLE SHEETS =====
-const SYNC_API_URL = 'https://script.google.com/macros/s/AKfycbzB7DC5uaL74_uelben1wwswa915fRzWntXeE43_dH_ZD_v7k0FVhVA-jem933m_Ic/exec';
+const SYNC_API_URL = 'https://script.google.com/macros/library/d/1NXbV3uUvPZlXvND_WTDuiKFzPvQ5zQtAi2XyKNQGn68v2qcaStoC6KwF/7';
 
 // Carregar dados da nuvem
 async function loadFromCloud() {
