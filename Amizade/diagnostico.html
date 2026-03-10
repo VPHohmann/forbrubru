@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diagnóstico</title>
+</head>
+<body>
+    <h1>Diagnóstico do Site</h1>
+    
+    <div id="passwordScreen" style="border: 2px solid red; padding: 20px; margin: 10px;">
+        🔴 TELA DE SENHA (deveria estar visível)
+    </div>
+    
+    <div id="content" style="border: 2px solid blue; padding: 20px; margin: 10px; display: none;">
+        🔵 CONTEÚDO (deveria estar escondido)
+    </div>
+    
+    <button onclick="testar()">Executar Teste</button>
+    <div id="resultado"></div>
+    
+    <script>
+        function testar() {
+            const senha = document.getElementById('passwordScreen');
+            const conteudo = document.getElementById('content');
+            const resultado = document.getElementById('resultado');
+            
+            let msg = '';
+            
+            if (senha) {
+                msg += '✅ Elemento passwordScreen encontrado<br>';
+                msg += 'Estilo atual: ' + window.getComputedStyle(senha).display + '<br>';
+            } else {
+                msg += '❌ Elemento passwordScreen NÃO encontrado<br>';
+            }
+            
+            if (conteudo) {
+                msg += '✅ Elemento content encontrado<br>';
+                msg += 'Estilo atual: ' + window.getComputedStyle(conteudo).display + '<br>';
+            } else {
+                msg += '❌ Elemento content NÃO encontrado<br>';
+            }
+            
+            msg += '<br>localStorage: <br>';
+            msg += 'cofre-logado = ' + localStorage.getItem('cofre-logado') + '<br>';
+            
+            resultado.innerHTML = msg;
+        }
+        
+        testar();
+    </script>
+</body>
+</html>
