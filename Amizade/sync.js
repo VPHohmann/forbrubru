@@ -1,20 +1,17 @@
-const SYNC_API_URL = 'https://script.google.com/macros/library/d/1NXbV3uUvPZlXvND_WTDuiKFzPvQ5zQtAi2XyKNQGn68v2qcaStoC6KwF/7';
-
-// ===== FUNÇÃO PARA CARREGAR DA NUVEM - UMA ÚNICA VEZ =====
+// ===== FUNÇÃO PARA CARREGAR DA NUVEM =====
 async function loadFromCloud() {
     console.log('🔄 Carregando da nuvem...');
     
     try {
         const url = SYNC_API_URL + '?t=' + Date.now();
-        
         const response = await fetch(url);
         
         if (response.ok) {
             const cloudMemories = await response.json();
-            console.log('📦 Dados recebidos');
             
             if (cloudMemories && cloudMemories.length > 0) {
                 localStorage.setItem('bruvan-memories', JSON.stringify(cloudMemories));
+                console.log('✅ Dados sincronizados');
                 
                 if (typeof displayHistoriaTimeline === 'function') {
                     displayHistoriaTimeline();
@@ -22,7 +19,7 @@ async function loadFromCloud() {
             }
         }
     } catch (error) {
-        console.log('❌ Erro:', error);
+        console.log('❌ Erro ao carregar:', error);
     }
 }
 
@@ -40,7 +37,7 @@ async function saveToCloud() {
             body: JSON.stringify(lastMemory)
         });
         
-        console.log('✅ Memória salva');
+        console.log('✅ Memória salva na nuvem');
     } catch (error) {
         console.log('⚠️ Erro ao salvar');
     }
@@ -61,11 +58,11 @@ window.deleteMemory = function(id) {
     setTimeout(loadFromCloud, 1000);
 };
 
-// ===== INICIALIZAÇÃO - UMA ÚNICA VEZ, SEM LOOP =====
+// ===== INICIALIZAÇÃO =====
 document.addEventListener('DOMContentLoaded', function() {
     if (localStorage.getItem('cofre-logado') === 'true') {
-        console.log('🚀 Carregando dados...');
-        loadFromCloud(); // APENAS UMA VEZ
+        console.log('🚀 Sincronização inicial');
+        loadFromCloud();
     }
 });
 
