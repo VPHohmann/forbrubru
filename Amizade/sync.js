@@ -1,3 +1,5 @@
+const SYNC_API_URL = 'https://script.google.com/macros/s/AKfycbzj9tf-9_l8ooz4lBQSO4vIldNctfYzjCDToG2Iqk8J7vkQ-BiVJJsefxrGpZofv3c/exec';
+
 // ===== FUNÇÃO PARA CARREGAR DA NUVEM =====
 async function loadFromCloud() {
     console.log('🔄 Carregando da nuvem...');
