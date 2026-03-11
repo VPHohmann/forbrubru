@@ -58,28 +58,28 @@ function displayHistoriaTimeline() {
         const authorClass = memory.author === 'Bruna' ? 'bruna' : 'vanessa';
         const authorName = memory.author === 'Bruna' ? 'Bruna 💚' : 'Vanessa 💜';
         
-        memoryElement.innerHTML = `
-            <div class="timeline-dot"></div>
-            <div class="timeline-content">
-                <div class="timeline-date">📅 ${memory.date} ${memory.time !== '00:00' ? `⏰ ${memory.time}` : ''}</div>
-                <h3>${memory.title}</h3>
-                <p>${memory.description}</p>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                    <div>
-                        <span class="memory-tag">🏷️ ${memory.theme}</span>
-                        <span class="memory-author author-badge-timeline ${authorClass}">✍️ ${authorName}</span>
-                    </div>
-                    <div class="memory-actions">
-                        <button class="edit-memory" onclick="editMemory('${memory.id}')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="delete-memory" onclick="deleteMemory('${memory.id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
+memoryElement.innerHTML = `
+    <div class="timeline-dot"></div>
+    <div class="timeline-content">
+        <div class="timeline-date">📅 ${String(memory.date).split('T')[0] || memory.date} ⏰ ${String(memory.time).includes('T') ? String(memory.time).split('T')[1].substring(0,5) : memory.time}</div>
+        <h3>${memory.title}</h3>
+        <p>${memory.description}</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+            <div>
+                <span class="memory-tag">🏷️ ${memory.theme}</span>
+                <span class="memory-author author-badge-timeline ${authorClass}">✍️ ${authorName}</span>
             </div>
-        `;
+            <div class="memory-actions">
+                <button class="edit-memory" onclick="editMemory('${memory.id}')">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="delete-memory" onclick="deleteMemory('${memory.id}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+`;
         timeline.appendChild(memoryElement);
     });
 }
