@@ -24,7 +24,7 @@ function loadMemories() {
     displayHistoriaTimeline();
 }
 
-// Mostrar timeline principal
+// Mostrar timeline principal (CORRIGIDO)
 function displayHistoriaTimeline() {
     const timeline = document.getElementById('historiaTimeline');
     if (!timeline) return;
@@ -58,33 +58,42 @@ function displayHistoriaTimeline() {
         const authorClass = memory.author === 'Bruna' ? 'bruna' : 'vanessa';
         const authorName = memory.author === 'Bruna' ? 'Bruna 💚' : 'Vanessa 💜';
         
-memoryElement.innerHTML = `
-    <div class="timeline-dot"></div>
-    <div class="timeline-content">
-        <div class="timeline-date">📅 ${String(memory.date).split('T')[0] || memory.date} ⏰ ${String(memory.time).includes('T') ? String(memory.time).split('T')[1].substring(0,5) : memory.time}</div>
-        <h3>${memory.title}</h3>
-        <p>${memory.description}</p>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-            <div>
-                <span class="memory-tag">🏷️ ${memory.theme}</span>
-                <span class="memory-author author-badge-timeline ${authorClass}">✍️ ${authorName}</span>
+        // 🔥 CORREÇÃO AQUI: trata data e hora vindo da planilha
+        const dataDisplay = memory.date && memory.date.includes('T') 
+            ? memory.date.split('T')[0] 
+            : memory.date || '';
+        
+        const horaDisplay = memory.time && memory.time.includes('T') 
+            ? memory.time.split('T')[1].substring(0,5) 
+            : memory.time || '';
+        
+        memoryElement.innerHTML = `
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <div class="timeline-date">📅 ${dataDisplay} ${horaDisplay ? `⏰ ${horaDisplay}` : ''}</div>
+                <h3>${memory.title}</h3>
+                <p>${memory.description}</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <div>
+                        <span class="memory-tag">🏷️ ${memory.theme}</span>
+                        <span class="memory-author author-badge-timeline ${authorClass}">✍️ ${authorName}</span>
+                    </div>
+                    <div class="memory-actions">
+                        <button class="edit-memory" onclick="editMemory('${memory.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-memory" onclick="deleteMemory('${memory.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="memory-actions">
-                <button class="edit-memory" onclick="editMemory('${memory.id}')">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="delete-memory" onclick="deleteMemory('${memory.id}')">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-`;
+        `;
         timeline.appendChild(memoryElement);
     });
 }
 
-// Mostrar memórias filtradas por tema
+// Mostrar memórias filtradas por tema (também corrigido)
 function filterByTheme(theme) {
     document.querySelectorAll('.theme-btn').forEach(btn => {
         btn.classList.remove('active');
@@ -125,10 +134,15 @@ function filterByTheme(theme) {
         const authorClass = memory.author === 'Bruna' ? 'bruna' : 'vanessa';
         const authorName = memory.author === 'Bruna' ? 'Bruna 💚' : 'Vanessa 💜';
         
+        // 🔥 CORREÇÃO TAMBÉM PARA A LISTA DE FILTROS
+        const dataDisplay = memory.date && memory.date.includes('T') 
+            ? memory.date.split('T')[0] 
+            : memory.date || '';
+        
         html += `
             <div class="memory-list-item">
                 <div class="memory-list-header">
-                    <span class="memory-list-date">📅 ${memory.date}</span>
+                    <span class="memory-list-date">📅 ${dataDisplay}</span>
                     <span class="memory-list-theme">🏷️ ${memory.theme}</span>
                 </div>
                 <h3 class="memory-list-title">${memory.title}</h3>
@@ -202,6 +216,9 @@ function editMemory(id) {
 
 function formatDateForInput(dateString) {
     if (!dateString) return '';
+    // Se vier no formato ISO (yyyy-mm-dd), já está ok
+    if (dateString.includes('-')) return dateString;
+    // Se vier no formato dd/mm/aaaa, converte
     const [day, month, year] = dateString.split('/');
     return `${year}-${month}-${day}`;
 }
