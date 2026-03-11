@@ -1,37 +1,48 @@
 const SYNC_API_URL = 'https://script.google.com/macros/library/d/1NXbV3uUvPZlXvND_WTDuiKFzPvQ5zQtAi2XyKNQGn68v2qcaStoC6KwF/7';
 
-// Carregar dados da nuvem
+// ===== FUNÇÃO PARA CARREGAR DA NUVEM - UMA ÚNICA VEZ =====
 async function loadFromCloud() {
+    console.log('🔄 Carregando da nuvem...');
+    
     try {
-        const response = await fetch(SYNC_API_URL);
-        const cloudMemories = await response.json();
+        const url = SYNC_API_URL + '?t=' + Date.now();
         
-        if (Array.isArray(cloudMemories) && cloudMemories.length > 0) {
-            localStorage.setItem('bruvan-memories', JSON.stringify(cloudMemories));
-            console.log('✅ Memórias carregadas da nuvem!');
-            if (typeof displayHistoriaTimeline === 'function') {
-                displayHistoriaTimeline();
+        const response = await fetch(url);
+        
+        if (response.ok) {
+            const cloudMemories = await response.json();
+            console.log('📦 Dados recebidos');
+            
+            if (cloudMemories && cloudMemories.length > 0) {
+                localStorage.setItem('bruvan-memories', JSON.stringify(cloudMemories));
+                
+                if (typeof displayHistoriaTimeline === 'function') {
+                    displayHistoriaTimeline();
+                }
             }
         }
     } catch (error) {
-        console.log('⚠️ Erro ao carregar da nuvem:', error);
+        console.log('❌ Erro:', error);
     }
 }
 
-// Salvar na nuvem
+// ===== FUNÇÃO PARA SALVAR NA NUVEM =====
 async function saveToCloud() {
     const memories = JSON.parse(localStorage.getItem('bruvan-memories') || '[]');
+    if (memories.length === 0) return;
     
     try {
-        for (const memory of memories) {
-            await fetch(SYNC_API_URL, {
-                method: 'POST',
-                body: JSON.stringify(memory)
-            });
-        }
-        console.log('✅ Memórias salvas na nuvem!');
+        const lastMemory = memories[memories.length - 1];
+        
+        await fetch(SYNC_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(lastMemory)
+        });
+        
+        console.log('✅ Memória salva');
     } catch (error) {
-        console.log('⚠️ Erro ao salvar na nuvem:', error);
+        console.log('⚠️ Erro ao salvar');
     }
 }
 
@@ -42,18 +53,19 @@ const originalDeleteMemory = window.deleteMemory;
 window.saveMemory = function() {
     if (originalSaveMemory) originalSaveMemory();
     setTimeout(saveToCloud, 500);
+    setTimeout(loadFromCloud, 2000);
 };
 
 window.deleteMemory = function(id) {
     if (originalDeleteMemory) originalDeleteMemory(id);
-    setTimeout(saveToCloud, 500);
+    setTimeout(loadFromCloud, 1000);
 };
 
-// Carrega da nuvem quando a página inicia
+// ===== INICIALIZAÇÃO - UMA ÚNICA VEZ, SEM LOOP =====
 document.addEventListener('DOMContentLoaded', function() {
-    const isLoggedIn = localStorage.getItem('cofre-logado');
-    if (isLoggedIn === 'true') {
-        setTimeout(loadFromCloud, 1500);
+    if (localStorage.getItem('cofre-logado') === 'true') {
+        console.log('🚀 Carregando dados...');
+        loadFromCloud(); // APENAS UMA VEZ
     }
 });
 
